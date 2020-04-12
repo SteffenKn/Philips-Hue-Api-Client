@@ -23,9 +23,12 @@
     "url": "https://github.com/SteffenKn/Hue-Api/issues"
   },
   "homepage": "https://github.com/SteffenKn/Hue-Api#readme",
-  "dependencies": {},
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
   "devDependencies": {
     "@types/node": "13.11.1",
+    "@types/node-fetch": "^2.5.6",
     "tslint": "6.1.1",
     "typescript": "3.8.3"
   }
