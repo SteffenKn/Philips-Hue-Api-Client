@@ -1,0 +1,32 @@
+{
+  "name": "hue-api",
+  "version": "0.0.1",
+  "description": "An API client for the Philips Hue API.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run build:package",
+    "build:package": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteffenKn/Hue-Api.git"
+  },
+  "keywords": [
+    "Philips",
+    "Hue",
+    "Philips",
+    "Hue"
+  ],
+  "author": "Steffen Knaup",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteffenKn/Hue-Api/issues"
+  },
+  "homepage": "https://github.com/SteffenKn/Hue-Api#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "13.11.1",
+    "tslint": "6.1.1",
+    "typescript": "3.8.3"
+  }
+}
