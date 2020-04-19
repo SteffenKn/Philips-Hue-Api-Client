@@ -2,18 +2,21 @@ import {RequestInit} from 'node-fetch';
 
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import {LoginResult} from './types/index';
+import { Lightbulb } from './Lightbulb';
+import {LightsData, LoginResult} from './types/index';
 
 export class Bridge {
   private _clientName: string;
   private _apiKey: string;
+  private _ip: string;
 
-  private fetchClient: HueFetchClient;
+  private _fetchClient: HueFetchClient;
 
   constructor(ip: string, clientName: string) {
+    this._ip = ip;
     this._clientName = clientName;
 
-    this.fetchClient = new HueFetchClient(ip);
+    this._fetchClient = new HueFetchClient(ip);
   }
 
   public get apiKey(): string {
@@ -40,12 +43,33 @@ export class Bridge {
     }
   }
 
-  private async checkIfLoggedIn(): Promise<boolean> {
-    const path: string = `/${this._apiKey}`;
+  public async getAllLights(): Promise<Array<Lightbulb>> {
+    if (!this._apiKey) {
+      throw new Error('You have to login first.');
+    }
 
-    const response = await this.fetchClient.get(path);
+    const path: string = `/${this._apiKey}/lights`;
 
-    return !response.error;
+    const response = await this._fetchClient.get<LightsData>(path);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const lightbulbData = response.value;
+
+    const lightbulbIds: Array<string> = Object.keys(lightbulbData);
+
+    const lightbulbs: Array<Lightbulb> = [];
+    for (const lightbulbId of lightbulbIds) {
+      const lightbulbName: string = lightbulbData[lightbulbId].name;
+
+      const lightbulb = new Lightbulb(this._ip, this._apiKey, lightbulbId, lightbulbName);
+
+      lightbulbs.push(lightbulb);
+    }
+
+    return lightbulbs;
   }
 
   private async loginWithoutApiKey(): Promise<void> {
@@ -57,7 +81,7 @@ export class Bridge {
 
     const options: RequestInit = {body: body};
 
-    const response = await this.fetchClient.post<LoginResult>(path, options);
+    const response = await this._fetchClient.post<LoginResult>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -70,4 +94,11 @@ export class Bridge {
     this._apiKey = apiKey;
   }
 
+  private async checkIfLoggedIn(): Promise<boolean> {
+    const path: string = `/${this._apiKey}`;
+
+    const response = await this._fetchClient.get(path);
+
+    return !response.error;
+  }
 }
