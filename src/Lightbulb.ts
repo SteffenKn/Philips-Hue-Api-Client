@@ -1,8 +1,8 @@
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import {LightbulbData, LightbulbState} from './types/index';
+import {ILight, LightbulbData, LightbulbState, RgbColor} from './types/index';
 
-export class Lightbulb {
+export class Lightbulb implements ILight {
   private _id: string;
   private _name: string;
   private _apiKey: string;
@@ -26,7 +26,7 @@ export class Lightbulb {
   }
 
   public async on(): Promise<void> {
-    const path: string = `/${this._apiKey}/lights/${this._id + 1}/state`;
+    const path: string = `/${this._apiKey}/lights/${this._id}/state`;
 
     const body = JSON.stringify({on: true});
     const options = {
@@ -70,17 +70,21 @@ export class Lightbulb {
     }
   }
 
-  // public async changeColor(color: RgbColor): Promise<void> {
+  public async getColor(): Promise<RgbColor> {
+    throw new Error('Method not implemented.');
+  }
 
-  // }
+  public async setColor(color: RgbColor): Promise<boolean> {
+    throw new Error('Method not yet implemented.');
+  }
 
-  // public async changeBrightness(brightness: number): Promise<void> {
+  public async setBrightness(brightness: number): Promise<boolean> {
+    throw new Error('Method not yet implemented.');
+  }
 
-  // }
-
-  // public async changeColorAndBrightness(color: RgbColor, brightness: number): Promise<void> {
-
-  // }
+  public async setColorAndBrightness(color: RgbColor, brightness: number): Promise<boolean> {
+    throw new Error('Method not yet implemented.');
+  }
 
   public async getState(): Promise<LightbulbState> {
     const path: string = `/${this._apiKey}/${this._id}`;
