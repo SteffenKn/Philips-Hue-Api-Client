@@ -144,10 +144,6 @@ export class Lightbulb implements ILight {
     throw new Error('Method not yet implemented.');
   }
 
-  public async setColorAndBrightness(color: RgbColor, brightness: number): Promise<boolean> {
-    throw new Error('Method not yet implemented.');
-  }
-
   public async getState(): Promise<LightbulbState> {
     const data = await this.getData();
 

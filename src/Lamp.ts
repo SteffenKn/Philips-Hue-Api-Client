@@ -107,22 +107,6 @@ export class Lamp implements ILight {
     });
   }
 
-  public async setColorAndBrightness(color: RgbColor, brightness: number): Promise<boolean> {
-    const promises: Array<Promise<boolean>> = [];
-
-    this._lightbulbs.forEach((lightbulb) => {
-      const promise = lightbulb.setColorAndBrightness(color, brightness);
-
-      promises.push(promise);
-    });
-
-    const results = await Promise.all(promises);
-
-    return !results.some((result) => {
-      return !result;
-    });
-  }
-
   public async getState(): Promise<Array<LightbulbState>> {
     const lightbulbStates: Array<LightbulbState> = [];
 
