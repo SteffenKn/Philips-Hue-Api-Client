@@ -1,6 +1,16 @@
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import {ILight, LightbulbData, LightbulbState, RgbColor, TurnResponse} from './types/index';
+import {ColorConverter} from './utils/ColorConverter';
+
+import {
+  ColorAsXY,
+  ColorChangeResponse,
+  ILight,
+  LightbulbData,
+  LightbulbState,
+  RgbColor,
+  TurnResponse,
+} from './types/index';
 
 export class Lightbulb implements ILight {
   private _id: string;
@@ -31,7 +41,9 @@ export class Lightbulb implements ILight {
 
     const order: string = `${route}/on`;
 
-    const body = JSON.stringify({on: true});
+    const body = JSON.stringify({
+      on: true,
+    });
     const options = {
       body: body,
     };
@@ -51,7 +63,9 @@ export class Lightbulb implements ILight {
 
     const order: string = `${route}/on`;
 
-    const body = JSON.stringify({on: false});
+    const body = JSON.stringify({
+      on: false,
+    });
     const options = {
       body: body,
     };
@@ -71,7 +85,9 @@ export class Lightbulb implements ILight {
 
     const order: string = `${route}/on`;
 
-    const body = JSON.stringify({on: shouldTurnOn});
+    const body = JSON.stringify({
+      on: shouldTurnOn,
+    });
     const options = {
       body: body,
     };
@@ -86,11 +102,42 @@ export class Lightbulb implements ILight {
   }
 
   public async getColor(): Promise<RgbColor> {
-    throw new Error('Method not implemented.');
+    const state = await this.getState();
+
+    const xy: ColorAsXY = {
+      x: state.xy[0],
+      y: state.xy[1],
+    };
+    const brightness: number = state.bri;
+
+    const rgb = ColorConverter.convertXYtoRGB(xy, brightness);
+
+    return rgb;
   }
 
   public async setColor(color: RgbColor): Promise<boolean> {
-    throw new Error('Method not yet implemented.');
+    const route: string = `/lights/${this._id}/state`;
+    const path: string = `/${this._apiKey}${route}`;
+    const order: string = `${route}/xy`;
+
+    const xy = ColorConverter.convertRGBToXY(color);
+
+    const body = JSON.stringify({
+      xy: [xy.x, xy.y],
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<ColorChangeResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const colorResult = response.value[0].success[order];
+
+    return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
   }
 
   public async setBrightness(brightness: number): Promise<boolean> {
@@ -102,19 +149,13 @@ export class Lightbulb implements ILight {
   }
 
   public async getState(): Promise<LightbulbState> {
-    const path: string = `/${this._apiKey}/${this._id}`;
+    const data = await this.getData();
 
-    const response = await this._fetchClient.get<LightbulbData>(path);
-
-    if (response.error) {
-      throw new Error(response.error.description);
-    }
-
-    return response.value.state;
+    return data.state;
   }
 
   public async getData(): Promise<LightbulbData> {
-    const path: string = `/${this._apiKey}/${this._id}`;
+    const path: string = `/${this._apiKey}/lights/${this._id}`;
 
     const response = await this._fetchClient.get<LightbulbData>(path);
 
