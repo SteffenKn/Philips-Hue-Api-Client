@@ -1,6 +1,6 @@
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import {ILight, LightbulbData, LightbulbState, RgbColor} from './types/index';
+import {ILight, LightbulbData, LightbulbState, RgbColor, TurnResponse} from './types/index';
 
 export class Lightbulb implements ILight {
   private _id: string;
@@ -25,49 +25,64 @@ export class Lightbulb implements ILight {
     return this._name;
   }
 
-  public async on(): Promise<void> {
-    const path: string = `/${this._apiKey}/lights/${this._id}/state`;
+  public async on(): Promise<boolean> {
+    const route: string = `/lights/${this._id}/state`;
+    const path: string = `/${this._apiKey}${route}`;
+
+    const order: string = `${route}/on`;
 
     const body = JSON.stringify({on: true});
     const options = {
       body: body,
     };
 
-    const response = await this._fetchClient.put(path, options);
+    const response = await this._fetchClient.put<TurnResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
     }
+
+    return response.value[0].success[order];
   }
 
-  public async off(): Promise<void> {
-    const path: string = `/${this._apiKey}/lights/${this._id}/state`;
+  public async off(): Promise<boolean> {
+    const route: string = `/lights/${this._id}/state`;
+    const path: string = `/${this._apiKey}${route}`;
+
+    const order: string = `${route}/on`;
 
     const body = JSON.stringify({on: false});
     const options = {
       body: body,
     };
 
-    const response = await this._fetchClient.put(path, options);
+    const response = await this._fetchClient.put<TurnResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
     }
+
+    return !response.value[0].success[order];
   }
 
-  public async turn(shouldTurnOn: boolean): Promise<void> {
-    const path: string = `/${this._apiKey}/lights/${this._id}/state`;
+  public async turn(shouldTurnOn: boolean): Promise<boolean> {
+    const route: string = `/lights/${this._id}/state`;
+    const path: string = `/${this._apiKey}${route}`;
+
+    const order: string = `${route}/on`;
 
     const body = JSON.stringify({on: shouldTurnOn});
     const options = {
       body: body,
     };
 
-    const response = await this._fetchClient.put(path, options);
+    const response = await this._fetchClient.put<TurnResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
     }
+
+    return shouldTurnOn === response.value[0].success[order];
   }
 
   public async getColor(): Promise<RgbColor> {

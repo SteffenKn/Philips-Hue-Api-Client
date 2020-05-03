@@ -15,8 +15,8 @@ export class Lamp implements ILight {
     return this._name;
   }
 
-  public async on(): Promise<void> {
-    const promises: Array<Promise<void>> = [];
+  public async on(): Promise<boolean> {
+    const promises: Array<Promise<boolean>> = [];
 
     this._lightbulbs.forEach((lightbulb) => {
       const promise = lightbulb.on();
@@ -24,11 +24,15 @@ export class Lamp implements ILight {
       promises.push(promise);
     });
 
-    await Promise.all(promises);
+    const results = await Promise.all(promises);
+
+    return !results.some((result) => {
+      return !result;
+    });
   }
 
-  public async off(): Promise<void> {
-    const promises: Array<Promise<void>> = [];
+  public async off(): Promise<boolean> {
+    const promises: Array<Promise<boolean>> = [];
 
     this._lightbulbs.forEach((lightbulb) => {
       const promise = lightbulb.off();
@@ -36,11 +40,15 @@ export class Lamp implements ILight {
       promises.push(promise);
     });
 
-    await Promise.all(promises);
+    const results = await Promise.all(promises);
+
+    return !results.some((result) => {
+      return result;
+    });
   }
 
-  public async turn(shouldTurnOn: boolean): Promise<void> {
-    const promises: Array<Promise<void>> = [];
+  public async turn(shouldTurnOn: boolean): Promise<boolean> {
+    const promises: Array<Promise<boolean>> = [];
 
     this._lightbulbs.forEach((lightbulb) => {
       const promise = lightbulb.turn(shouldTurnOn);
@@ -48,7 +56,11 @@ export class Lamp implements ILight {
       promises.push(promise);
     });
 
-    await Promise.all(promises);
+    const results = await Promise.all(promises);
+
+    return !results.some((result) => {
+      return result === shouldTurnOn;
+    });
   }
 
   public async getColor(): Promise<LampColors> {
