@@ -3,6 +3,7 @@ import {HueFetchClient} from './utils/hue-fetch-client';
 import {ColorConverter} from './utils/ColorConverter';
 
 import {
+  BrightnessChangeResponse,
   ColorAsXY,
   ColorChangeResponse,
   ILight,
@@ -140,8 +141,29 @@ export class Lightbulb implements ILight {
     return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
   }
 
-  public async setBrightness(brightness: number): Promise<boolean> {
-    throw new Error('Method not yet implemented.');
+  public async setBrightness(brightnessPercent: number): Promise<boolean> {
+    const route: string = `/lights/${this._id}/state`;
+    const path: string = `/${this._apiKey}${route}`;
+    const order: string = `${route}/bri`;
+
+    const brightness = brightnessPercent * 254;
+
+    const body = JSON.stringify({
+      bri: brightness,
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<BrightnessChangeResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const brightnessResponse = response.value[0].success[order];
+
+    return brightnessResponse === brightness;
   }
 
   public async getState(): Promise<LightbulbState> {

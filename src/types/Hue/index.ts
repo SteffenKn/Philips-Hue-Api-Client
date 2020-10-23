@@ -1,3 +1,4 @@
+export * from './BrightnessChangeResponse';
 export * from './ColorChangeResponse';
 export * from './HueXYColor';
 export * from './LightbulbData';
