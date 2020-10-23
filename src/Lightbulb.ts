@@ -56,7 +56,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    return response.value.find((value) => value.success[order]).success[order];
+    return response.value.find((value) => value.success[order] !== undefined).success[order];
   }
 
   public async off(immediate: boolean = false): Promise<boolean> {
@@ -79,7 +79,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    return !response.value.find((value) => value.success[order]).success[order];
+    return !response.value.find((value) => value.success[order] !== undefined).success[order];
   }
 
   public async turn(shouldTurnOn: boolean, immediate: boolean = false): Promise<boolean> {
@@ -125,7 +125,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    const colorResult = response.value.find((value) => value.success[order]).success[order];
+    const colorResult = response.value.find((value) => value.success[order] !== undefined).success[order];
 
     return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
   }
@@ -151,7 +151,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    const brightnessResponse = response.value.find((value) => value.success[order]).success[order];
+    const brightnessResponse = response.value.find((value) => value.success[order] !== undefined).success[order];
 
     return brightnessResponse === brightness;
   }
