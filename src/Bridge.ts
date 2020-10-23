@@ -2,7 +2,7 @@ import {RequestInit} from 'node-fetch';
 
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import { Lightbulb } from './Lightbulb';
+import {Lightbulb, Lightgroup} from './index';
 import {LightsData, LoginResult} from './types/index';
 
 export class Bridge {
@@ -70,6 +70,47 @@ export class Bridge {
     }
 
     return lightbulbs;
+  }
+
+  public async getAllGroups(): Promise<Array<Lightgroup>> {
+    if (!this._apiKey) {
+      throw new Error('You have to login first.');
+    }
+
+    const path: string = `/${this._apiKey}/groups`;
+
+    const response = await this._fetchClient.get<LightsData>(path);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const lightbulbData = response.value;
+
+    const lightgroupIds: Array<string> = Object.keys(lightbulbData);
+
+    const lightgroups: Array<Lightgroup> = [];
+    for (const lightgroupId of lightgroupIds) {
+      const lightgroupName: string = lightbulbData[lightgroupId].name;
+
+      const lightgroup = new Lightgroup(this._ip, this._apiKey, lightgroupId, lightgroupName);
+
+      lightgroups.push(lightgroup);
+    }
+
+    return lightgroups;
+  }
+
+  public async getGroupByName(name: string): Promise<Lightgroup> {
+    const lightgroups: Array<Lightgroup> = await this.getAllGroups();
+
+    const searchedLightgroup = lightgroups.find((lightgroup) => lightgroup.name === name);
+
+    if (!searchedLightgroup) {
+      throw new Error(`Lightgroup with name ${name} not found.`);
+    }
+
+    return searchedLightgroup;
   }
 
   public async isLoggedIn(): Promise<boolean> {

@@ -1,0 +1,176 @@
+import {HueFetchClient} from './utils/hue-fetch-client';
+
+import {ColorConverter} from './utils/ColorConverter';
+
+import {
+  BrightnessChangeResponse,
+  ColorAsXY,
+  ColorChangeResponse,
+  ILight,
+  LightgroupData,
+  LightgroupState,
+  RgbColor,
+  TurnResponse,
+} from './types/index';
+
+export class Lightgroup implements ILight {
+  private _id: string;
+  private _name: string;
+  private _apiKey: string;
+
+  private _fetchClient: HueFetchClient;
+
+  constructor(ip: string, apiKey: string, id: string, name: string) {
+    this._apiKey = apiKey;
+    this._id = id;
+    this._name = name;
+
+    this._fetchClient = new HueFetchClient(ip);
+  }
+
+  public get id(): string {
+    return this._id;
+  }
+
+  public get name(): string {
+    return this._name;
+  }
+
+  public async on(immediate: boolean = false): Promise<boolean> {
+    const route: string = `/groups/${this._id}/action`;
+    const path: string = `/${this._apiKey}${route}`;
+
+    const order: string = `${route}/on`;
+
+    const body = JSON.stringify({
+      on: true,
+      transitiontime: immediate ? 0 : undefined,
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<TurnResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    return response.value.find((value) => value.success[order] !== undefined).success[order];
+  }
+
+  public async off(immediate: boolean = false): Promise<boolean> {
+    const route: string = `/groups/${this._id}/on`;
+    const path: string = `/${this._apiKey}${route}`;
+
+    const order: string = `${route}/on`;
+
+    const body = JSON.stringify({
+      on: false,
+      transitiontime: immediate ? 0 : undefined,
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<TurnResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    return !response.value.find((value) => value.success[order] !== undefined).success[order];
+  }
+
+  public async turn(shouldTurnOn: boolean, immediate: boolean = false): Promise<boolean> {
+    if (shouldTurnOn) {
+      return this.on(immediate);
+    }
+
+    return this.off(immediate);
+  }
+
+  public async getColor(): Promise<RgbColor> {
+    const state = await this.getState();
+
+    const xy: ColorAsXY = {
+      x: state.xy[0],
+      y: state.xy[1],
+    };
+    const brightness: number = state.bri;
+
+    const rgb = ColorConverter.convertXYtoRGB(xy, brightness);
+
+    return rgb;
+  }
+
+  public async setColor(color: RgbColor, immediate: boolean = false): Promise<boolean> {
+    const route: string = `/groups/${this._id}/action`;
+    const path: string = `/${this._apiKey}${route}`;
+    const order: string = `${route}/xy`;
+
+    const xy = ColorConverter.convertRGBToXY(color);
+
+    const body = JSON.stringify({
+      xy: [xy.x, xy.y],
+      transitiontime: immediate ? 0 : undefined,
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<ColorChangeResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const colorResult = response.value.find((value) => value.success[order] !== undefined).success[order];
+
+    return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
+  }
+
+  public async setBrightness(brightnessPercent: number, immediate: boolean = false): Promise<boolean> {
+    const route: string = `/groups/${this._id}/action`;
+    const path: string = `/${this._apiKey}${route}`;
+    const order: string = `${route}/bri`;
+
+    const brightness = Math.floor(brightnessPercent * 2.54);
+
+    const body = JSON.stringify({
+      bri: brightness,
+      transitiontime: immediate ? 0 : undefined,
+    });
+    const options = {
+      body: body,
+    };
+
+    const response = await this._fetchClient.put<BrightnessChangeResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    const brightnessResponse = response.value.find((value) => value.success[order] !== undefined).success[order];
+
+    return brightnessResponse === brightness;
+  }
+
+  public async getState(): Promise<LightgroupState> {
+    const data = await this.getData();
+
+    return data.action;
+  }
+
+  public async getData(): Promise<LightgroupData> {
+    const path: string = `/${this._apiKey}/groups/${this._id}`;
+
+    const response = await this._fetchClient.get<LightgroupData>(path);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    return response.value;
+  }
+}
