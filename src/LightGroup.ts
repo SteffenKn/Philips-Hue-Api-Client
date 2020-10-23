@@ -60,7 +60,7 @@ export class Lightgroup implements ILight {
   }
 
   public async off(immediate: boolean = false): Promise<boolean> {
-    const route: string = `/groups/${this._id}/on`;
+    const route: string = `/groups/${this._id}/action`;
     const path: string = `/${this._apiKey}${route}`;
 
     const order: string = `${route}/on`;
