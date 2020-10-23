@@ -149,7 +149,7 @@ export class Lightbulb implements ILight {
     const path: string = `/${this._apiKey}${route}`;
     const order: string = `${route}/bri`;
 
-    const brightness = brightnessPercent * 254;
+    const brightness = brightnessPercent * 2.54;
 
     const body = JSON.stringify({
       bri: brightness,
