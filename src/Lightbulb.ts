@@ -44,7 +44,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: true,
-      tansitiontime: immediate ? 0 : undefined,
+      transitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -67,7 +67,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: false,
-      tansitiontime: immediate ? 0 : undefined,
+      transitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -90,7 +90,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: shouldTurnOn,
-      tansitiontime: immediate ? 0 : undefined,
+      transitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -119,7 +119,7 @@ export class Lightbulb implements ILight {
     return rgb;
   }
 
-  public async setColor(color: RgbColor): Promise<boolean> {
+  public async setColor(color: RgbColor, immediate: boolean = false): Promise<boolean> {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
     const order: string = `${route}/xy`;
@@ -128,6 +128,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       xy: [xy.x, xy.y],
+      transitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -153,7 +154,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       bri: brightness,
-      tansitiontime: immediate ? 0 : undefined,
+      transitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
