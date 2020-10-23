@@ -36,7 +36,7 @@ export class Lightbulb implements ILight {
     return this._name;
   }
 
-  public async on(): Promise<boolean> {
+  public async on(immediate: boolean = false): Promise<boolean> {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
 
@@ -44,6 +44,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: true,
+      tansitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -58,7 +59,7 @@ export class Lightbulb implements ILight {
     return response.value[0].success[order];
   }
 
-  public async off(): Promise<boolean> {
+  public async off(immediate: boolean = false): Promise<boolean> {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
 
@@ -66,6 +67,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: false,
+      tansitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -80,7 +82,7 @@ export class Lightbulb implements ILight {
     return !response.value[0].success[order];
   }
 
-  public async turn(shouldTurnOn: boolean): Promise<boolean> {
+  public async turn(shouldTurnOn: boolean, immediate: boolean = false): Promise<boolean> {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
 
@@ -88,6 +90,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       on: shouldTurnOn,
+      tansitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
@@ -141,7 +144,7 @@ export class Lightbulb implements ILight {
     return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
   }
 
-  public async setBrightness(brightnessPercent: number): Promise<boolean> {
+  public async setBrightness(brightnessPercent: number, immediate: boolean = false): Promise<boolean> {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
     const order: string = `${route}/bri`;
@@ -150,6 +153,7 @@ export class Lightbulb implements ILight {
 
     const body = JSON.stringify({
       bri: brightness,
+      tansitiontime: immediate ? 0 : undefined,
     });
     const options = {
       body: body,
