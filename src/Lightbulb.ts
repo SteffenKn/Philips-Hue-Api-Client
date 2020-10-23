@@ -83,26 +83,11 @@ export class Lightbulb implements ILight {
   }
 
   public async turn(shouldTurnOn: boolean, immediate: boolean = false): Promise<boolean> {
-    const route: string = `/lights/${this._id}/state`;
-    const path: string = `/${this._apiKey}${route}`;
-
-    const order: string = `${route}/on`;
-
-    const body = JSON.stringify({
-      on: shouldTurnOn,
-      transitiontime: immediate ? 0 : undefined,
-    });
-    const options = {
-      body: body,
-    };
-
-    const response = await this._fetchClient.put<TurnResponse>(path, options);
-
-    if (response.error) {
-      throw new Error(response.error.description);
+    if (shouldTurnOn) {
+      return this.on(immediate);
     }
 
-    return shouldTurnOn === response.value.find((value) => value.success[order]).success[order];
+    return this.off(immediate);
   }
 
   public async getColor(): Promise<RgbColor> {
