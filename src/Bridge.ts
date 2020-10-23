@@ -27,7 +27,7 @@ export class Bridge {
     if (apiKey) {
       await this.loginViaApiKey(apiKey);
 
-      const isLoggedIn = await this.checkIfLoggedIn();
+      const isLoggedIn = await this.isLoggedIn();
 
       if (!isLoggedIn) {
         throw new Error('The API key is invalid.');
@@ -35,7 +35,7 @@ export class Bridge {
     } else {
       await this.loginWithoutApiKey();
 
-      const isLoggedIn = await this.checkIfLoggedIn();
+      const isLoggedIn = await this.isLoggedIn();
 
       if (!isLoggedIn) {
         throw new Error('Error while logging in. Please try again.');
@@ -72,6 +72,14 @@ export class Bridge {
     return lightbulbs;
   }
 
+  public async isLoggedIn(): Promise<boolean> {
+    const path: string = `/${this._apiKey}`;
+
+    const response = await this._fetchClient.get(path);
+
+    return !response.error;
+  }
+
   private async loginWithoutApiKey(): Promise<void> {
     const path: string = '/';
 
@@ -92,13 +100,5 @@ export class Bridge {
 
   private async loginViaApiKey(apiKey: string): Promise<void> {
     this._apiKey = apiKey;
-  }
-
-  private async checkIfLoggedIn(): Promise<boolean> {
-    const path: string = `/${this._apiKey}`;
-
-    const response = await this._fetchClient.get(path);
-
-    return !response.error;
   }
 }
