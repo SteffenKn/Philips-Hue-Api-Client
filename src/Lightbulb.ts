@@ -56,7 +56,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    return response.value[0].success[order];
+    return response.value.find((value) => value.success[order]).success[order];
   }
 
   public async off(immediate: boolean = false): Promise<boolean> {
@@ -79,7 +79,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    return !response.value[0].success[order];
+    return !response.value.find((value) => value.success[order]).success[order];
   }
 
   public async turn(shouldTurnOn: boolean, immediate: boolean = false): Promise<boolean> {
@@ -102,7 +102,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    return shouldTurnOn === response.value[0].success[order];
+    return shouldTurnOn === response.value.find((value) => value.success[order]).success[order];
   }
 
   public async getColor(): Promise<RgbColor> {
@@ -140,7 +140,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    const colorResult = response.value[0].success[order];
+    const colorResult = response.value.find((value) => value.success[order]).success[order];
 
     return xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
   }
@@ -166,7 +166,7 @@ export class Lightbulb implements ILight {
       throw new Error(response.error.description);
     }
 
-    const brightnessResponse = response.value[0].success[order];
+    const brightnessResponse = response.value.find((value) => value.success[order]).success[order];
 
     return brightnessResponse === brightness;
   }
