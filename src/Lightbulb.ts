@@ -63,7 +63,7 @@ export class Lightbulb implements ILight {
     const route: string = `/lights/${this._id}/state`;
     const path: string = `/${this._apiKey}${route}`;
 
-    const order: string = `${route}/off`;
+    const order: string = `${route}/on`;
 
     const body = JSON.stringify({
       on: false,
