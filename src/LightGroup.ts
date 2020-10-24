@@ -9,6 +9,7 @@ import {
   ILight,
   LightgroupData,
   LightgroupState,
+  MixedChangeResponse,
   RgbColor,
   TurnResponse,
 } from './types/index';
@@ -154,6 +155,64 @@ export class Lightgroup implements ILight {
     const brightnessResponse = response.value.find((value) => value.success[order] !== undefined).success[order];
 
     return brightnessResponse === brightness;
+  }
+
+  public async changeState(on?: boolean, color?: RgbColor, brightnessPercent?: number, immediate: boolean = false): Promise<boolean> {
+    const route: string = `/groups/${this._id}/action`;
+    const path: string = `/${this._apiKey}${route}`;
+    const brightnessOrder: string = `${route}/bri`;
+    const onOrder: string = `${route}/on`;
+    const colorOrder: string = `${route}/xy`;
+
+    const body: {transitiontime?: number, on?: boolean, xy?: Array<number>, bri?: number}  = {
+      transitiontime: immediate ? 0 : undefined,
+      on: on,
+    };
+
+    if (color !== undefined) {
+      const xy = ColorConverter.convertRGBToXY(color);
+      body.xy = [xy.x, xy.y];
+    }
+
+    if (brightnessPercent !== undefined) {
+      const brightness = Math.floor(brightnessPercent * 2.54);
+
+      body.bri = brightness;
+    }
+
+    const options = {
+      body: JSON.stringify(body),
+    };
+
+    const response = await this._fetchClient.put<MixedChangeResponse>(path, options);
+
+    if (response.error) {
+      throw new Error(response.error.description);
+    }
+
+    let success: boolean = true;
+
+    if (on !== undefined) {
+      const onResult = response.value.find((value) => value.success[onOrder] !== undefined).success[onOrder];
+
+      success = success && onResult === on;
+    }
+
+    if (brightnessPercent !== undefined) {
+      const brightnessResponse = response.value.find((value) => value.success[brightnessOrder] !== undefined).success[brightnessOrder];
+
+      success = success && brightnessResponse === Math.floor(brightnessPercent * 2.54);
+    }
+
+    if (color !== undefined) {
+      const colorResult = response.value.find((value) => value.success[colorOrder] !== undefined).success[colorOrder];
+
+      const xy = ColorConverter.convertRGBToXY(color);
+
+      success = success && xy.x - colorResult[0] < 0.01 && xy.y - colorResult[1] < 0.01;
+    }
+
+    return success;
   }
 
   public async getState(): Promise<LightgroupState> {

@@ -8,5 +8,6 @@ export * from './LightgroupData';
 export * from './LightgroupState';
 export * from './LightsData';
 export * from './LoginResult';
+export * from './MixedChangeResponse';
 export * from './ResponseError';
 export * from './TurnResponse';

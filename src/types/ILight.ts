@@ -7,4 +7,5 @@ export interface ILight {
   getColor(): Promise<RgbColor | LampColors>;
   setColor(color: RgbColor): Promise<boolean>;
   setBrightness(brigthness: number): Promise<boolean>;
+  changeState(on?: boolean, color?: RgbColor, brightness?: number): Promise<boolean>;
 }
