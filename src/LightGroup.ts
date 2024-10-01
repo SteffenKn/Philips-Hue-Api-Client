@@ -2,31 +2,21 @@ import {HueFetchClient} from './utils/hue-fetch-client';
 
 import {ColorConverter} from './utils/ColorConverter';
 
-import {
-  BrightnessChangeResponse,
-  ColorAsXY,
-  ColorChangeResponse,
-  ILight,
-  LightgroupData,
-  LightgroupState,
-  MixedChangeResponse,
-  RgbColor,
-  TurnResponse,
-} from './types/index';
+import {BrightnessChangeResponse, ColorAsXY, ColorChangeResponse, ILight, LightgroupData, LightgroupState, MixedChangeResponse, RgbColor, TurnResponse} from './types/index';
 
 export class Lightgroup implements ILight {
   private _id: string;
   private _name: string;
-  private _apiKey: string;
+  private apiKey: string;
 
-  private _fetchClient: HueFetchClient;
+  private fetchClient: HueFetchClient;
 
   constructor(ip: string, apiKey: string, id: string, name: string) {
-    this._apiKey = apiKey;
+    this.apiKey = apiKey;
     this._id = id;
     this._name = name;
 
-    this._fetchClient = new HueFetchClient(ip);
+    this.fetchClient = new HueFetchClient(ip);
   }
 
   public get id(): string {
@@ -39,7 +29,7 @@ export class Lightgroup implements ILight {
 
   public async on(immediate: boolean = false): Promise<boolean> {
     const route: string = `/groups/${this._id}/action`;
-    const path: string = `/${this._apiKey}${route}`;
+    const path: string = `/${this.apiKey}${route}`;
 
     const order: string = `${route}/on`;
 
@@ -51,7 +41,7 @@ export class Lightgroup implements ILight {
       body: body,
     };
 
-    const response = await this._fetchClient.put<TurnResponse>(path, options);
+    const response = await this.fetchClient.put<TurnResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -62,7 +52,7 @@ export class Lightgroup implements ILight {
 
   public async off(immediate: boolean = false): Promise<boolean> {
     const route: string = `/groups/${this._id}/action`;
-    const path: string = `/${this._apiKey}${route}`;
+    const path: string = `/${this.apiKey}${route}`;
 
     const order: string = `${route}/on`;
 
@@ -74,7 +64,7 @@ export class Lightgroup implements ILight {
       body: body,
     };
 
-    const response = await this._fetchClient.put<TurnResponse>(path, options);
+    const response = await this.fetchClient.put<TurnResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -107,7 +97,7 @@ export class Lightgroup implements ILight {
 
   public async setColor(color: RgbColor, immediate: boolean = false): Promise<boolean> {
     const route: string = `/groups/${this._id}/action`;
-    const path: string = `/${this._apiKey}${route}`;
+    const path: string = `/${this.apiKey}${route}`;
     const order: string = `${route}/xy`;
 
     const xy = ColorConverter.convertRGBToXY(color);
@@ -120,7 +110,7 @@ export class Lightgroup implements ILight {
       body: body,
     };
 
-    const response = await this._fetchClient.put<ColorChangeResponse>(path, options);
+    const response = await this.fetchClient.put<ColorChangeResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -133,7 +123,7 @@ export class Lightgroup implements ILight {
 
   public async setBrightness(brightnessPercent: number, immediate: boolean = false): Promise<boolean> {
     const route: string = `/groups/${this._id}/action`;
-    const path: string = `/${this._apiKey}${route}`;
+    const path: string = `/${this.apiKey}${route}`;
     const order: string = `${route}/bri`;
 
     const brightness = Math.floor(brightnessPercent * 2.54);
@@ -146,7 +136,7 @@ export class Lightgroup implements ILight {
       body: body,
     };
 
-    const response = await this._fetchClient.put<BrightnessChangeResponse>(path, options);
+    const response = await this.fetchClient.put<BrightnessChangeResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -159,12 +149,12 @@ export class Lightgroup implements ILight {
 
   public async changeState(on?: boolean, color?: RgbColor, brightnessPercent?: number, immediate: boolean = false): Promise<boolean> {
     const route: string = `/groups/${this._id}/action`;
-    const path: string = `/${this._apiKey}${route}`;
+    const path: string = `/${this.apiKey}${route}`;
     const brightnessOrder: string = `${route}/bri`;
     const onOrder: string = `${route}/on`;
     const colorOrder: string = `${route}/xy`;
 
-    const body: {transitiontime?: number, on?: boolean, xy?: Array<number>, bri?: number}  = {
+    const body: {transitiontime?: number; on?: boolean; xy?: Array<number>; bri?: number} = {
       transitiontime: immediate ? 0 : undefined,
       on: on,
     };
@@ -184,7 +174,7 @@ export class Lightgroup implements ILight {
       body: JSON.stringify(body),
     };
 
-    const response = await this._fetchClient.put<MixedChangeResponse>(path, options);
+    const response = await this.fetchClient.put<MixedChangeResponse>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -222,9 +212,9 @@ export class Lightgroup implements ILight {
   }
 
   public async getData(): Promise<LightgroupData> {
-    const path: string = `/${this._apiKey}/groups/${this._id}`;
+    const path: string = `/${this.apiKey}/groups/${this._id}`;
 
-    const response = await this._fetchClient.get<LightgroupData>(path);
+    const response = await this.fetchClient.get<LightgroupData>(path);
 
     if (response.error) {
       throw new Error(response.error.description);

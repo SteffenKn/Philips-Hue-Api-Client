@@ -1,23 +1,23 @@
-import fetch, {RequestInit} from 'node-fetch';
+import fetch from 'cross-fetch';
 
 import {Response} from './../types/index';
 
 export class HueFetchClient {
-  private _baseUrl: string;
+  private baseUrl: string;
 
   constructor(ip: string) {
-    this._baseUrl = `http://${ip}/api`;
+    this.baseUrl = `http://${ip}/api`;
   }
 
   public async get<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'GET';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = Array.isArray(responseValue) && responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -33,14 +33,14 @@ export class HueFetchClient {
   }
 
   public async head<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'HEAD';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -56,14 +56,14 @@ export class HueFetchClient {
   }
 
   public async post<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'POST';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -79,14 +79,14 @@ export class HueFetchClient {
   }
 
   public async put<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'PUT';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -102,14 +102,14 @@ export class HueFetchClient {
   }
 
   public async delete<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'DELETE';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -125,14 +125,14 @@ export class HueFetchClient {
   }
 
   public async connect<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'CONNECT';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -148,14 +148,14 @@ export class HueFetchClient {
   }
 
   public async options<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'OPTIONS';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -171,14 +171,14 @@ export class HueFetchClient {
   }
 
   public async trace<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'TRACE';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {
@@ -194,14 +194,14 @@ export class HueFetchClient {
   }
 
   public async patch<TResponse>(path: string, options: RequestInit = {}): Promise<Response<TResponse>> {
-    const url: string = `${this._baseUrl}${path}`;
+    const url: string = `${this.baseUrl}${path}`;
 
     options.method = 'PATCH';
 
     const response = await fetch(url, options);
 
     let responseValue = await response.json();
-    let responseError;
+    let responseError: any;
 
     const requestFailed: boolean = responseValue[0].error !== undefined;
     if (requestFailed) {

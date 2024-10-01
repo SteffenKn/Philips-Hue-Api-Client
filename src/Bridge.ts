@@ -1,26 +1,20 @@
-import {RequestInit} from 'node-fetch';
-
 import {HueFetchClient} from './utils/hue-fetch-client';
 
 import {Lightbulb, Lightgroup} from './index';
 import {LightsData, LoginResult} from './types/index';
 
 export class Bridge {
-  private _clientName: string;
-  private _apiKey: string;
-  private _ip: string;
+  private clientName: string;
+  private apiKey: string;
+  private ip: string;
 
-  private _fetchClient: HueFetchClient;
+  private fetchClient: HueFetchClient;
 
   constructor(ip: string, clientName: string) {
-    this._ip = ip;
-    this._clientName = clientName;
+    this.ip = ip;
+    this.clientName = clientName;
 
-    this._fetchClient = new HueFetchClient(ip);
-  }
-
-  public get apiKey(): string {
-    return this._apiKey;
+    this.fetchClient = new HueFetchClient(ip);
   }
 
   public async login(apiKey?: string): Promise<void> {
@@ -44,13 +38,13 @@ export class Bridge {
   }
 
   public async getAllLights(): Promise<Array<Lightbulb>> {
-    if (!this._apiKey) {
+    if (!this.apiKey) {
       throw new Error('You have to login first.');
     }
 
-    const path: string = `/${this._apiKey}/lights`;
+    const path: string = `/${this.apiKey}/lights`;
 
-    const response = await this._fetchClient.get<LightsData>(path);
+    const response = await this.fetchClient.get<LightsData>(path);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -64,7 +58,7 @@ export class Bridge {
     for (const lightbulbId of lightbulbIds) {
       const lightbulbName: string = lightbulbData[lightbulbId].name;
 
-      const lightbulb = new Lightbulb(this._ip, this._apiKey, lightbulbId, lightbulbName);
+      const lightbulb = new Lightbulb(this.ip, this.apiKey, lightbulbId, lightbulbName);
 
       lightbulbs.push(lightbulb);
     }
@@ -73,13 +67,13 @@ export class Bridge {
   }
 
   public async getAllGroups(): Promise<Array<Lightgroup>> {
-    if (!this._apiKey) {
+    if (!this.apiKey) {
       throw new Error('You have to login first.');
     }
 
-    const path: string = `/${this._apiKey}/groups`;
+    const path: string = `/${this.apiKey}/groups`;
 
-    const response = await this._fetchClient.get<LightsData>(path);
+    const response = await this.fetchClient.get<LightsData>(path);
 
     if (response.error) {
       throw new Error(response.error.description);
@@ -93,7 +87,7 @@ export class Bridge {
     for (const lightgroupId of lightgroupIds) {
       const lightgroupName: string = lightbulbData[lightgroupId].name;
 
-      const lightgroup = new Lightgroup(this._ip, this._apiKey, lightgroupId, lightgroupName);
+      const lightgroup = new Lightgroup(this.ip, this.apiKey, lightgroupId, lightgroupName);
 
       lightgroups.push(lightgroup);
     }
@@ -114,9 +108,9 @@ export class Bridge {
   }
 
   public async isLoggedIn(): Promise<boolean> {
-    const path: string = `/${this._apiKey}`;
+    const path: string = `/${this.apiKey}`;
 
-    const response = await this._fetchClient.get(path);
+    const response = await this.fetchClient.get(path);
 
     return !response.error;
   }
@@ -125,21 +119,21 @@ export class Bridge {
     const path: string = '/';
 
     const body: string = JSON.stringify({
-      devicetype: `Hue-Api-Client#${this._clientName}`,
+      devicetype: `Hue-Api-Client#${this.clientName}`,
     });
 
     const options: RequestInit = {body: body};
 
-    const response = await this._fetchClient.post<LoginResult>(path, options);
+    const response = await this.fetchClient.post<LoginResult>(path, options);
 
     if (response.error) {
       throw new Error(response.error.description);
     }
 
-    this._apiKey = response.value[0].success.username;
+    this.apiKey = response.value[0].success.username;
   }
 
   private async loginViaApiKey(apiKey: string): Promise<void> {
-    this._apiKey = apiKey;
+    this.apiKey = apiKey;
   }
 }
