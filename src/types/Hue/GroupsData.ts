@@ -1,5 +1,5 @@
-import {LightgroupData} from './index';
+import {LightGroupData} from './index';
 
 export type GroupsData = {
-  [id: string]: LightgroupData;
+  [id: string]: LightGroupData;
 };

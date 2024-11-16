@@ -2,9 +2,9 @@ import {HueFetchClient} from './utils/hue-fetch-client';
 
 import {ColorConverter} from './utils/ColorConverter';
 
-import {BrightnessChangeResponse, ColorAsXY, ColorChangeResponse, ILight, LightgroupData, LightgroupState, MixedChangeResponse, RgbColor, TurnResponse} from './types/index';
+import {BrightnessChangeResponse, ColorAsXY, ColorChangeResponse, ILight, LightGroupData, LightGroupState, MixedChangeResponse, RgbColor, TurnResponse} from './types/index';
 
-export class Lightgroup implements ILight {
+export class LightGroup implements ILight {
   private _id: string;
   private _name: string;
   private apiKey: string;
@@ -205,16 +205,16 @@ export class Lightgroup implements ILight {
     return success;
   }
 
-  public async getState(): Promise<LightgroupState> {
+  public async getState(): Promise<LightGroupState> {
     const data = await this.getData();
 
     return data.action;
   }
 
-  public async getData(): Promise<LightgroupData> {
+  public async getData(): Promise<LightGroupData> {
     const path: string = `/${this.apiKey}/groups/${this._id}`;
 
-    const response = await this.fetchClient.get<LightgroupData>(path);
+    const response = await this.fetchClient.get<LightGroupData>(path);
 
     if (response.error) {
       throw new Error(response.error.description);

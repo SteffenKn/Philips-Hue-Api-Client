@@ -1,7 +1,7 @@
-import {LightbulbState} from './LightbulbState';
+import {LightBulbState} from './LightBulbState';
 
-export type LightbulbData = {
-  state: LightbulbState;
+export type LightBulbData = {
+  state: LightBulbState;
   swupdate: {
     state: string;
     lastinstall: string;
@@ -12,46 +12,33 @@ export type LightbulbData = {
   manufacturername: string;
   productname: string;
   capabilities: {
-    certified: boolean,
+    certified: boolean;
     control: {
-      mindimlevel: number,
-      maxlumen: number,
-      colorgamuttype: string,
-      colorgamut: [
-        [
-          number,
-          number
-        ],
-        [
-          number,
-          number
-        ],
-        [
-          number,
-          number
-        ]
-      ],
+      mindimlevel: number;
+      maxlumen: number;
+      colorgamuttype: string;
+      colorgamut: [[number, number], [number, number], [number, number]];
       ct: {
-        min: number,
-        max: number,
-      },
-    },
+        min: number;
+        max: number;
+      };
+    };
     streaming: {
-      renderer: boolean,
-      proxy: boolean,
-    },
-  },
+      renderer: boolean;
+      proxy: boolean;
+    };
+  };
   config: {
-    archetype: string,
-    function: string,
-    direction: string,
+    archetype: string;
+    function: string;
+    direction: string;
     startup: {
-      mode: string,
-      configured: boolean,
-    },
-  },
-  uniqueid: string,
-  swversion: string,
-  swconfigid: string,
-  productid: string
+      mode: string;
+      configured: boolean;
+    };
+  };
+  uniqueid: string;
+  swversion: string;
+  swconfigid: string;
+  productid: string;
 };

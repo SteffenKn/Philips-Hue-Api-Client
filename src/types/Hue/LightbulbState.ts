@@ -1,4 +1,4 @@
-export type LightbulbState = {
+export type LightBulbState = {
   on: boolean;
   bri: number;
   hue: number;

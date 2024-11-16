@@ -1,6 +1,6 @@
 import {HueFetchClient} from './utils/hue-fetch-client';
 
-import {Lightbulb, Lightgroup} from './index';
+import {LightBulb, LightGroup} from './index';
 import {LightsData, LoginResult} from './types/index';
 
 export class Bridge {
@@ -37,7 +37,7 @@ export class Bridge {
     }
   }
 
-  public async getAllLights(): Promise<Array<Lightbulb>> {
+  public async getAllLights(): Promise<Array<LightBulb>> {
     if (!this.apiKey) {
       throw new Error('You have to login first.');
     }
@@ -50,23 +50,23 @@ export class Bridge {
       throw new Error(response.error.description);
     }
 
-    const lightbulbData = response.value;
+    const lightBulbData = response.value;
 
-    const lightbulbIds: Array<string> = Object.keys(lightbulbData);
+    const lightBulbIds: Array<string> = Object.keys(lightBulbData);
 
-    const lightbulbs: Array<Lightbulb> = [];
-    for (const lightbulbId of lightbulbIds) {
-      const lightbulbName: string = lightbulbData[lightbulbId].name;
+    const lightBulbs: Array<LightBulb> = [];
+    for (const lightBulbId of lightBulbIds) {
+      const lightBulbName: string = lightBulbData[lightBulbId].name;
 
-      const lightbulb = new Lightbulb(this.ip, this.apiKey, lightbulbId, lightbulbName);
+      const lightBulb = new LightBulb(this.ip, this.apiKey, lightBulbId, lightBulbName);
 
-      lightbulbs.push(lightbulb);
+      lightBulbs.push(lightBulb);
     }
 
-    return lightbulbs;
+    return lightBulbs;
   }
 
-  public async getAllGroups(): Promise<Array<Lightgroup>> {
+  public async getAllGroups(): Promise<Array<LightGroup>> {
     if (!this.apiKey) {
       throw new Error('You have to login first.');
     }
@@ -79,32 +79,32 @@ export class Bridge {
       throw new Error(response.error.description);
     }
 
-    const lightbulbData = response.value;
+    const lightBulbData = response.value;
 
-    const lightgroupIds: Array<string> = Object.keys(lightbulbData);
+    const lightGroupIds: Array<string> = Object.keys(lightBulbData);
 
-    const lightgroups: Array<Lightgroup> = [];
-    for (const lightgroupId of lightgroupIds) {
-      const lightgroupName: string = lightbulbData[lightgroupId].name;
+    const lightGroups: Array<LightGroup> = [];
+    for (const lightGroupId of lightGroupIds) {
+      const lightGroupName: string = lightBulbData[lightGroupId].name;
 
-      const lightgroup = new Lightgroup(this.ip, this.apiKey, lightgroupId, lightgroupName);
+      const lightGroup = new LightGroup(this.ip, this.apiKey, lightGroupId, lightGroupName);
 
-      lightgroups.push(lightgroup);
+      lightGroups.push(lightGroup);
     }
 
-    return lightgroups;
+    return lightGroups;
   }
 
-  public async getGroupByName(name: string): Promise<Lightgroup> {
-    const lightgroups: Array<Lightgroup> = await this.getAllGroups();
+  public async getGroupByName(name: string): Promise<LightGroup> {
+    const lightGroups: Array<LightGroup> = await this.getAllGroups();
 
-    const searchedLightgroup = lightgroups.find((lightgroup) => lightgroup.name === name);
+    const searchedLightGroup = lightGroups.find((lightGroup) => lightGroup.name === name);
 
-    if (!searchedLightgroup) {
-      throw new Error(`Lightgroup with name ${name} not found.`);
+    if (!searchedLightGroup) {
+      throw new Error(`LightGroup with name ${name} not found.`);
     }
 
-    return searchedLightgroup;
+    return searchedLightGroup;
   }
 
   public async isLoggedIn(): Promise<boolean> {

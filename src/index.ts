@@ -1,5 +1,5 @@
 export * from './Bridge';
-export * from './Lightbulb';
-export * from './Lightgroup';
+export * from './LightBulb';
+export * from './LightGroup';
 
 export * as HueTypes from './types';

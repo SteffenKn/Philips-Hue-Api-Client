@@ -2,9 +2,9 @@ import {HueFetchClient} from './utils/hue-fetch-client';
 
 import {ColorConverter} from './utils/ColorConverter';
 
-import {BrightnessChangeResponse, ColorAsXY, ColorChangeResponse, ILight, LightbulbData, LightbulbState, MixedChangeResponse, RgbColor, TurnResponse} from './types/index';
+import {BrightnessChangeResponse, ColorAsXY, ColorChangeResponse, ILight, LightBulbData, LightBulbState, MixedChangeResponse, RgbColor, TurnResponse} from './types/index';
 
-export class Lightbulb implements ILight {
+export class LightBulb implements ILight {
   private _id: string;
   private _name: string;
   private apiKey: string;
@@ -205,16 +205,16 @@ export class Lightbulb implements ILight {
     return success;
   }
 
-  public async getState(): Promise<LightbulbState> {
+  public async getState(): Promise<LightBulbState> {
     const data = await this.getData();
 
     return data.state;
   }
 
-  public async getData(): Promise<LightbulbData> {
+  public async getData(): Promise<LightBulbData> {
     const path: string = `/${this.apiKey}/lights/${this._id}`;
 
-    const response = await this.fetchClient.get<LightbulbData>(path);
+    const response = await this.fetchClient.get<LightBulbData>(path);
 
     if (response.error) {
       throw new Error(response.error.description);

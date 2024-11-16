@@ -1,14 +1,11 @@
-export type LightgroupState = {
-  on: boolean,
-  bri: number,
-  hue: number,
-  sat: number,
-  effect: string,
-  xy: [
-    number,
-    number
-  ],
-  ct: number,
-  alert: string,
-  colormode: string,
+export type LightGroupState = {
+  on: boolean;
+  bri: number;
+  hue: number;
+  sat: number;
+  effect: string;
+  xy: [number, number];
+  ct: number;
+  alert: string;
+  colormode: string;
 };

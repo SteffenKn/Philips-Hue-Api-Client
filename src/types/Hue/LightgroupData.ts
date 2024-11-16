@@ -1,15 +1,15 @@
-import {LightgroupState} from '../index';
+import {LightGroupState} from '../index';
 
-export type LightgroupData = {
-  name: string,
-  lights: Array<number>,
-  sensors: Array<any>,
-  type: string,
+export type LightGroupData = {
+  name: string;
+  lights: Array<number>;
+  sensors: Array<any>;
+  type: string;
   state: {
-    all_on: boolean,
-    any_on: boolean,
-  },
-  recycle: boolean,
-  class: string,
-  action: LightgroupState,
+    all_on: boolean;
+    any_on: boolean;
+  };
+  recycle: boolean;
+  class: string;
+  action: LightGroupState;
 };

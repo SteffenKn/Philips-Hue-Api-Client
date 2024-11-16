@@ -1,5 +1,5 @@
-import {LightbulbData} from './index';
+import {LightBulbData} from './index';
 
 export type LightsData = {
-  [id: string]: LightbulbData;
+  [id: string]: LightBulbData;
 };
